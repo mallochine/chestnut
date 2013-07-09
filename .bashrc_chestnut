@@ -1,0 +1,24 @@
+alias j='source ~/.chestnut/from_cli.sh'
+
+_chestnut_completion ()
+{
+    python ~/.chestnut/get_autocomplete.py $@
+    wait
+
+    local cur
+
+    COMPREPLY=()   # Array variable storing the possible completions.
+    cur=${COMP_WORDS[COMP_CWORD]}
+
+    AUTOCOMPLETE=$(cat ~/.chestnut/tmp_autocomplete.txt);
+
+    case "$cur" in
+    *)
+    COMPREPLY=( $( compgen -W '$AUTOCOMPLETE' -- $cur ) );;
+
+    esac
+
+    return 0
+}
+
+complete -F _chestnut_completion j

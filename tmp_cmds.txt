@@ -1,0 +1,6 @@
+cd /home/ec2-user/.chestnut/
+echo
+pwd
+echo
+ls
+echo
