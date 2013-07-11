@@ -61,44 +61,10 @@ class ChestnutIndexController:
                     .filter(ChestnutIndexEntry.path.like("%"+actual_query+"%"))
                     .all())
 
-        "Search for the best entry"
-        for entry in index:
-
-            "Naively build the list of keywords based on words in the path"
-            entry.keywords = entry.path.split("/")
-
-            "Turn each keyword string into a keyword object"
-            entry.analyzed_keywords = []
-            for keyword in entry.keywords:
-                analyzed_keyword = {}
-                analyzed_keyword['word'] = keyword
-                analyzed_keyword['score'] = 0.0
-                entry.analyzed_keywords.append( analyzed_keyword )
-
-            "Rate each query's word's relevance in the index"
-            entry.score = 0
-            for word in query:
-                for analyzed_keyword in entry.analyzed_keywords:
-                    keyword = analyzed_keyword['word']
-                    """
-                    If word is in keyword, then score the word's closeness to 
-                    keyword
-                    """
-                    if keyword.lower().find(word.lower()) >= 0:
-                        analyzed_keyword['score'] = len(word) / len(keyword)
-
-            """
-            Get the entry's total score. The average of all analyzed 
-            keyword's score
-            """
-            for analyzed_keyword in entry.analyzed_keywords:
-                entry.score += analyzed_keyword['score']
-            entry.score /= len( entry.analyzed_keywords )
-
-        "Get the entry with the top score. Default is home directory."
+        "Get the shortest path in index"
         best_path = self.home + "/"
         if index != []:
-            best_path = max(index, key=lambda entry: entry.score).path
+            best_path = min(index, key=lambda entry: len(entry.path)).path
 
         """
         Now that we have the path, get the appropriate command.
@@ -109,8 +75,6 @@ class ChestnutIndexController:
 
         commands.append("echo")
         commands.append("pwd")
-        commands.append("echo")
-        commands.append("ls")
         commands.append("echo")
 
         if best_path[-1] != '/':
