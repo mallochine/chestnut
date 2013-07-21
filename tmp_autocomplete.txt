@@ -1,1 +1,1 @@
-.chestnut
+.bashrc_chestnut.swp .bashrc_chestnut
