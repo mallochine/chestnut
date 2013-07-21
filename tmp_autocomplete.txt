@@ -1,1 +1,1 @@
-.bashrc_chestnut.swp .bashrc_chestnut
+chestnut/controllers
