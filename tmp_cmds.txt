@@ -1,4 +1,5 @@
-cd /home/ec2-user/.chestnut/chestnut/controllers/
+cd /home/ec2-user/.chestnut/
 echo
 pwd
 echo
+vim /home/ec2-user/.chestnut/.bashrc_chestnut
