@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 from chestnut.controllers.chestnut_index import ChestnutIndexController
 from chestnut.controllers.history import HistoryController
 import sys, os

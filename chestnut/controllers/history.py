@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 from __future__ import division
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
