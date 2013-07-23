@@ -1,1 +1,1 @@
-asdf adsf chestnut .chestnut practice/public  .bashrc_chestnut chestnut/controllers home lol chestnut models chestnut/models from_cli.py chestnut/public chestnut/from_cli.py practice/controllers practice/models practice/practice git .bashrc
+.chestnut

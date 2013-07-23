@@ -4,6 +4,8 @@ from sqlalchemy.orm import sessionmaker
 import os, sys, time, string
 
 from chestnut.models.chestnut_index_entry import ChestnutIndexEntry
+from chestnut.models.history_from_fs_entry import HistoryFromFSEntry
+from chestnut.controllers.history import HistoryController
 
 class ChestnutIndexController:
     # Singleton Class
@@ -19,6 +21,9 @@ class ChestnutIndexController:
         ChestnutIndexEntry.__table__.metadata = MetaData( bind=self.db )
         ChestnutIndexEntry.__table__.create(checkfirst=True)
 
+        HistoryFromFSEntry.__table__.metadata = MetaData( bind=self.db )
+        HistoryFromFSEntry.__table__.create(checkfirst=True)
+
     'Given the path to the file, return the directory of the file'
     def get_dir(self, path):
         while path[-1] != '/':
@@ -28,10 +33,6 @@ class ChestnutIndexController:
 
     def crawl(self, start_path):
         start_time = time.time()
-
-        'Clear all the entries in chestnut_index'
-        ChestnutIndexEntry.__table__.drop(checkfirst=True)
-        ChestnutIndexEntry.__table__.create(checkfirst=True)
 
         'Walk through all the files and sub-directories'
         for (dirpath, dirnames, filenames) in os.walk(start_path):
@@ -50,32 +51,58 @@ class ChestnutIndexController:
 
         print "Crawl took", (finish_time - start_time), "seconds"
 
-    def answer(self, query):
+    def populate_empty_tables(self):
+        'If table chestnut_index is empty:'
         if self.session.query(ChestnutIndexEntry).count() == 0:
+
+            'Clear all the entries in chestnut_index'
+            ChestnutIndexEntry.__table__.drop(checkfirst=True)
+            ChestnutIndexEntry.__table__.create(checkfirst=True)
+
             self.crawl( self.home )
 
+        'If table history_from_fs is empty:'
+        if self.session.query(HistoryFromFSEntry).count() == 0:
+
+            'Build history_from_fs'
+            history = HistoryController()
+            history.build_history_from_fs()
+
+    def answer(self, query):
+        'Answering the query requires non-empty tables'
+        self.populate_empty_tables()
+
+        'Start the timer on the query'
+        start_time = time.time()
+
+        'Get the shortest path that contains query'
         actual_query = " ".join(query)
-        index = (self.session.query(ChestnutIndexEntry)
+        best_entry = (self.session.query(ChestnutIndexEntry)
                     .filter(ChestnutIndexEntry.path.like("%"+actual_query+"%"))
-                    .all())
+                    .order_by( func.char_length(ChestnutIndexEntry.path) )
+                    .first())
 
-        "Get the shortest path in index"
         best_path = self.home + "/"
-        if index != []:
-            best_path = min(index, key=lambda entry: len(entry.path)).path
+        if best_entry is not None:
+            best_path = best_entry.path
 
-        """
-        Now that we have the path, get the appropriate command.
+        '''
+        Now that we have the path, request the appropriate commands
         We want to use vim for file, and cd for directories
-        """
+        '''
         commands = []
-        commands.append("cd " + self.get_dir( best_path ))
-
-        commands.append("echo")
-        commands.append("pwd")
-        commands.append("echo")
+        commands.append('cd ' + self.get_dir( best_path ))
+        commands.append('echo')
+        commands.append('pwd')
+        commands.append('echo')
 
         if best_path[-1] != '/':
-            commands.append("vim " + best_path)
+            commands.append('vim ' + best_path)
+
+        'Stop the timer on the query'
+        finish_time = time.time()
+
+        'Print how long the query took'
+        print "Query took", (finish_time - start_time), "seconds"
 
         return commands
