@@ -4,7 +4,6 @@ from sqlalchemy.orm import sessionmaker
 import os, sys, time, string
 
 from chestnut.models.chestnut_index_entry import ChestnutIndexEntry
-from chestnut.models.history_from_fs_entry import HistoryFromFSEntry
 from chestnut.controllers.history import HistoryController
 
 class ChestnutIndexController:
@@ -20,9 +19,6 @@ class ChestnutIndexController:
 
         ChestnutIndexEntry.__table__.metadata = MetaData( bind=self.db )
         ChestnutIndexEntry.__table__.create(checkfirst=True)
-
-        HistoryFromFSEntry.__table__.metadata = MetaData( bind=self.db )
-        HistoryFromFSEntry.__table__.create(checkfirst=True)
 
     'Given the path to the file, return the directory of the file'
     def get_dir(self, path):
@@ -61,13 +57,6 @@ class ChestnutIndexController:
 
             self.crawl( self.home )
 
-        'If table history_from_fs is empty:'
-        if self.session.query(HistoryFromFSEntry).count() == 0:
-
-            'Build history_from_fs'
-            history = HistoryController()
-            history.build_history_from_fs()
-
     def answer(self, query):
         'Answering the query requires non-empty tables'
         self.populate_empty_tables()
@@ -87,8 +76,8 @@ class ChestnutIndexController:
             best_path = best_entry.path
 
         '''
-        Now that we have the path, request the appropriate commands
-        We want to use vim for file, and cd for directories
+        Now that we have the path, request the appropriate commands.
+        We want to use vim for editing, and cd for directories.
         '''
         commands = []
         commands.append('cd ' + self.get_dir( best_path ))
