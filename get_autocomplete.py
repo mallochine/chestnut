@@ -24,6 +24,6 @@ prev_word = completion_args[1]
 history = HistoryController()
 options = history.autocomplete( word_to_complete )
 
-f = open(history.home + "/.chestnut/tmp_autocomplete.txt", "w")
+f = open(history.home + "/.chestnut/tmp/autocomplete.txt", "w")
 f.write( " ".join(options) )
 f.close()

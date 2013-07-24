@@ -3,4 +3,4 @@
 python ~/.chestnut/from_cli.py $@
 wait
 
-source $HOME"/.chestnut/tmp_cmds.txt"
+source $HOME"/.chestnut/tmp/cmds.txt"

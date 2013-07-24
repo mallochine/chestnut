@@ -9,7 +9,7 @@ sys.argv.pop(0) # remove the first element, which is usually './from_cli.py'
 script_cmds = search.answer( sys.argv )
 
 'Write commands that the parent bash script will execute'
-f = open(search.home + "/.chestnut/tmp_cmds.txt","w")
+f = open(search.home + "/.chestnut/tmp/cmds.txt","w")
 f.write( "\n".join(script_cmds) )
 f.close()
 

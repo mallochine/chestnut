@@ -10,7 +10,7 @@ _chestnut_completion ()
     COMPREPLY=()   # Array variable storing the possible completions.
     cur=${COMP_WORDS[COMP_CWORD]}
 
-    AUTOCOMPLETE=$(cat ~/.chestnut/tmp_autocomplete.txt);
+    AUTOCOMPLETE=$(cat ~/.chestnut/tmp/autocomplete.txt);
 
     case "$cur" in
     *)
