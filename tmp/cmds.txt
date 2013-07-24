@@ -1,4 +1,4 @@
-cd /home/ec2-user/.chestnut/
+cd /home/ec2-user/.chestnut/chestnut/models/
 echo
 pwd
 echo
