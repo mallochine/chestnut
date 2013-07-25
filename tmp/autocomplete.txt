@@ -1,1 +1,1 @@
-.ch .chesntut .chestnut
+.chestnut-1.0 .chestnut

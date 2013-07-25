@@ -66,10 +66,18 @@ class ChestnutIndexController:
 
         'Get the shortest path that contains query'
         actual_query = " ".join(query)
-        best_entry = (self.session.query(ChestnutIndexEntry)
-                    .filter(ChestnutIndexEntry.path.like("%"+actual_query+"%"))
-                    .order_by( func.char_length(ChestnutIndexEntry.path) )
-                    .first())
+#        best_entry = (self.session.query(ChestnutIndexEntry)
+#                    .filter(ChestnutIndexEntry.path.like("%"+actual_query+"%"))
+#                    .order_by( func.char_length(ChestnutIndexEntry.path) )
+#                    .first())
+        query = self.session.query(ChestnutIndexEntry)
+        query = query.filter(ChestnutIndexEntry.path.like("%"+actual_query+"%"))
+        query = query.order_by( func.char_length(ChestnutIndexEntry.path) )
+        query = query.limit(5)
+
+        print query.statement
+
+        best_entry = query.first()
 
         best_path = self.home + "/"
         if best_entry is not None:
